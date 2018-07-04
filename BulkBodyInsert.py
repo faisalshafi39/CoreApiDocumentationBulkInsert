@@ -81,11 +81,27 @@ for item in endpointsitemlist:
                     #     print responsebodyname
                     # else: 
                     if 'T:BQECore.Model.IEnumerable' in returns:
-                        print "babay1" 
+                        print "babay"   
                         returns = re.sub('T:BQECore.Model.IEnumerable', '', returns)
                         returns = re.sub('{Model.','',returns)
                         returns = re.sub('}','',returns) 
-                        isarray = True  
+                        isarray = True 
+                        if '{' in returns:
+                            returns = re.sub('{','',returns)
+                        if 'APIResponse' in returns:
+                            returns = re.sub('APIResponse','',returns)
+                            returns = re.sub('}','',returns)  
+                    elif 'T:BQECore.Model.List' in returns:
+                        print "babay1" 
+                        returns = re.sub('T:BQECore.Model.List', '', returns)
+                        returns = re.sub('{Model.','',returns)
+                        returns = re.sub('}','',returns) 
+                        isarray = True
+                        if '{' in returns:
+                            returns = re.sub('{','',returns)
+                        if 'APIResponse' in returns:
+                            returns = re.sub('APIResponse','',returns)
+                            returns = re.sub('}','',returns)               
                     elif 'T:BQECore.Model.' in returns:   
                         returns = re.sub('T:BQECore.Model.','',returns)
                     elif  'T:System.' in returns:
@@ -93,16 +109,22 @@ for item in endpointsitemlist:
                         returns = re.sub('T:System.','',returns) 
                     elif 'System.' in returns:
                         print "req"
-                        returns = re.sub('System.','',returns)     
-                    
-                        
+                        returns = re.sub('System.','',returns) 
+                    elif '{' in returns:
+                        returns = re.sub('{','',returns)
+                        returns = re.sub('}','',returns)
+       
                     cursor.execute("select id from models where Name = ?",returns)
                     modelid = cursor.fetchone() 
-                    print "kslaksalskalsk"
-                    cursor.execute('EXEC BodyInsert @Name=?, @ModelID=?, @EndPointID=?, @Description=?, @Filter=?, @BodyType=?,@IsArrayType=?'
-                    , responsebodyname, modelid[0],endpointid[0],None,None,'Response',isarray)
+                    print modelid,endpointid[0],isarray,"kslaksalskalsk",responsebodyname
+                    cursor.execute("select * from body where Name = ? and EndPointID=? ",responsebodyname,endpointid[0])
+                    responserepeatbody = cursor.fetchone() 
+                    if responserepeatbody == None:
+                        cursor.execute('EXEC BodyInsert @Name=?, @ModelID=?, @EndPointID=?, @Description=?, @Filter=?, @BodyType=?,@IsArrayType=?'
+                        , responsebodyname, modelid[0],endpointid[0],None,None,'Response',isarray)
 
-                    cnxn.commit()
+                        cnxn.commit()
+                    print "jjjmmhsdgsdfshdgsfdgh"
                     
                 except:
                     print "kikkmnnnn"
@@ -150,6 +172,22 @@ for item in endpointsitemlist:
                     returns = re.sub('{Model.','',returns)
                     returns = re.sub('}','',returns) 
                     isarray = True 
+                    if '{' in returns:
+                        returns = re.sub('{','',returns)
+                    if 'APIResponse' in returns:
+                        returns = re.sub('APIResponse','',returns)
+                        returns = re.sub('}','',returns)  
+                elif 'T:BQECore.Model.List' in returns:
+                    print "babay1" 
+                    returns = re.sub('T:BQECore.Model.List', '', returns)
+                    returns = re.sub('{Model.','',returns)
+                    returns = re.sub('}','',returns) 
+                    isarray = True
+                    if '{' in returns:
+                        returns = re.sub('{','',returns)
+                    if 'APIResponse' in returns:
+                        returns = re.sub('APIResponse','',returns)
+                        returns = re.sub('}','',returns)               
                 elif 'T:BQECore.Model.' in returns:   
                     returns = re.sub('T:BQECore.Model.','',returns)
                 elif  'T:System.' in returns:
@@ -158,16 +196,21 @@ for item in endpointsitemlist:
                 elif 'System.' in returns:
                     print "req"
                     returns = re.sub('System.','',returns) 
+                elif '{' in returns:
+                    returns = re.sub('{','',returns)
+                    returns = re.sub('}','',returns)    
                          
                 returns = re.sub('T:BQECore.Model.','',returns)
                 print returns
                 cursor.execute("select id from models where Name = ?",returns)
                 modelid = cursor.fetchone() 
-                print modelid
-                cursor.execute('EXEC BodyInsert @Name=?, @ModelID=?, @EndPointID=?, @Description=?, @Filter=?, @BodyType=?,@IsArrayType=?'
-                                , responsebodyname, modelid[0],endpointid[0],None,None,'Response',isarray)
+                cursor.execute("select * from body where Name = ? and EndPointID=? ",responsebodyname,endpointid[0])
+                responserepeatbody = cursor.fetchone() 
+                if responserepeatbody == None:
+                    cursor.execute('EXEC BodyInsert @Name=?, @ModelID=?, @EndPointID=?, @Description=?, @Filter=?, @BodyType=?,@IsArrayType=?'
+                    , responsebodyname, modelid[0],endpointid[0],None,None,'Response',isarray)
 
-                cnxn.commit()  
+                    cnxn.commit()  
             except:
                 print "hmmmmm"
                 pass             

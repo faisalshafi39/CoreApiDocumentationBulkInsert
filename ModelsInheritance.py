@@ -12,7 +12,7 @@ cursor = cnxn.cursor()
 from xml.dom import minidom
 
 # Reading the XML from File This gets altered on the basis of your xml File Path
-xmldoc = minidom.parse(r'C:\Users\Faisal.Shafi\Desktop\\BQECoreModel.xml')
+xmldoc = minidom.parse(r'C:\Users\Faisal.Shafi\Desktop\\BQECoreApi.xml')
 itemlist = xmldoc.getElementsByTagName('API')
 endpointsitemlist = xmldoc.getElementsByTagName('member')
 resultapiname = []	
@@ -22,11 +22,15 @@ api_description_bullets = ''
 # Getting inherit property tags
 for item in endpointsitemlist:    
     #Parsing Api Inherit Values 
-    if 'T:' in  item.attributes['name'].value:  
-        endpointsmodelname = item.getElementsByTagName('API_Name')[0].firstChild.nodeValue.strip() 
+    if 'T:' in  item.attributes['name'].value: 
+        try: 
+            endpointsmodelname = item.getElementsByTagName('API_Name')[0].firstChild.nodeValue.strip() 
+            cursor.execute("select id from models where Name = ?",endpointsmodelname)
+            endpointsmodelID = cursor.fetchone()
+        except:
+            endpointsmodelname  = None  
         #Getting which is using inherited models ID\
-        cursor.execute("select id from models where Name = ?",endpointsmodelname)
-        endpointsmodelID = cursor.fetchone()
+        
     if 'M:' in item.attributes['name'].value:
             if item.getElementsByTagName('Inherits'):
                 modelcontent = item.getElementsByTagName('Inherits')[0].firstChild.nodeValue.strip().split(',')
