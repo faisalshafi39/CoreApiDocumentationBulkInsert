@@ -44,12 +44,12 @@ for item in endpointsitemlist:
         if  isinstance(endpointsmodelname,list) :  
             print "hhhhh" ,endpointsmodelname
             for index,endpointsmodel in enumerate(endpointsmodelname):
+                isarray = False
                 try:
                     if '[]' in endpointsmodel:
                         endpointsmodel=endpointsmodel.split('[]')
                         endpointsmodel = endpointsmodel[0]
-                        isarray = True
-                    isarray = False    
+                        isarray = True    
                     cursor.execute("select id from models where Name = ?",endpointsmodel)
                     modelid = cursor.fetchone() 
                     print modelid,endpointsmodel
@@ -95,7 +95,7 @@ for item in endpointsitemlist:
                         print "req"
                         returns = re.sub('System.','',returns)     
                     
-                    isarray = False    
+                        
                     cursor.execute("select id from models where Name = ?",returns)
                     modelid = cursor.fetchone() 
                     print "kslaksalskalsk"
@@ -108,13 +108,13 @@ for item in endpointsitemlist:
                     print "kikkmnnnn"
                     pass
         else:
-            print "jjjjj" 
+            print "jjjjj"
+            isarray = False
             try:
                 if '[]' in endpointsmodelname:
                     endpointsmodelname=endpointsmodelname.split('[]')
                     endpointsmodelname = endpointsmodelname[0]
-                    isarray = True
-                isarray = False    
+                    isarray = True    
                 cursor.execute("select id from models where Name = ?",endpointsmodelname)
                 modelid = cursor.fetchone() 
                 # if endpointid == None and modelid == None:
@@ -158,8 +158,7 @@ for item in endpointsitemlist:
                 elif 'System.' in returns:
                     print "req"
                     returns = re.sub('System.','',returns) 
-                 
-                isarray = False        
+                         
                 returns = re.sub('T:BQECore.Model.','',returns)
                 print returns
                 cursor.execute("select id from models where Name = ?",returns)
