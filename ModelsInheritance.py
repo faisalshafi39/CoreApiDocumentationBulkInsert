@@ -25,23 +25,29 @@ for item in endpointsitemlist:
     if 'T:' in  item.attributes['name'].value: 
         try: 
             endpointsmodelname = item.getElementsByTagName('API_Name')[0].firstChild.nodeValue.strip() 
+            endpointsmodelname = re.sub(' ','',endpointsmodelname)
             cursor.execute("select id from models where Name = ?",endpointsmodelname)
             endpointsmodelID = cursor.fetchone()
+            print endpointsmodelID,endpointsmodelname
         except:
-            endpointsmodelname  = None  
-        #Getting which is using inherited models ID\
-        
+            endpointsmodelname  = None 
+        #Getting which is using inherited models ID
     if 'M:' in item.attributes['name'].value:
             if item.getElementsByTagName('Inherits'):
+                print item.getElementsByTagName('Inherits')
                 modelcontent = item.getElementsByTagName('Inherits')[0].firstChild.nodeValue.strip().split(',')
+                print modelcontent,"lillll", endpointsmodelID
                 for content in modelcontent:
                     # Getting inherited models ID
+                    content = re.sub(' ','',content)
+                    print content
                     cursor.execute("select id from models where Name = ?",content)
                     inheritedmodelid=cursor.fetchone()
                     
                     # Checking Previously entered entries in model
                     cursor.execute("select * from InheritedModels where InheritedFrom = ?",inheritedmodelid)
                     inheritedmodeluniqueid=cursor.fetchone()
+                    print inheritedmodelid
                     if inheritedmodeluniqueid == None:
                         cursor.execute('EXEC InheritedModelsInsert @InheritedFrom = ?, @ModelID=? '
                                                     , inheritedmodelid[0], endpointsmodelID[0])
