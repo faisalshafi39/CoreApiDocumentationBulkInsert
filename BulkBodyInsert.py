@@ -5,7 +5,7 @@ import pyodbc
 import re
 
 # Creating SQL SERVER Creation
-cnxn = pyodbc.connect(r"Driver={SQL Server Native Client 11.0};Server=.\SQL2016;Database=PublicApi;uid=sa;pwd=sa")
+cnxn = pyodbc.connect(r"Driver={SQL Server Native Client 11.0};Server=.\SQL2016;Database=CoreRestDocumentationJuly;uid=sa;pwd=sa")
 						
 cursor = cnxn.cursor()
 from xml.dom import minidom
@@ -52,19 +52,22 @@ for item in endpointsitemlist:
                         isarray = True    
                     cursor.execute("select id from models where Name = ?",endpointsmodel)
                     modelid = cursor.fetchone() 
-                    print modelid,endpointsmodel
+                    print modelid,endpointsmodel,"hmmmmmmmmmmmmmmmmmmmmmmmmm"
                     # if endpointid == None and modelid == None:
                     # Parsing Request Body parameters
                     for index2,params in enumerate(item.getElementsByTagName('param')):
                         if index == index2:
                             bodyname = params.attributes['name'].value.strip()
+                            print bodyname
+                            description = item.getElementsByTagName('param')[0].firstChild.nodeValue.strip()
+                            print description,"alalslaslaslals"
                             cursor.execute("select * from body where Name = ? and EndPointID=? ",bodyname,endpointid[0])
                             repeatbody = cursor.fetchone() 
                             print repeatbody,"killamammama"
                             if repeatbody == None:
-                                print "lalalaliijjjnnnn"
+                                print "lalalaliijjjnnnn",bodyname, modelid[0],endpointid[0],description,isarray,"gagan"
                                 cursor.execute('EXEC BodyInsert @Name=?, @ModelID=?, @EndPointID=?, @Description=?, @Filter=?, @BodyType=?, @IsArrayType=?'
-                                , bodyname, modelid[0],endpointid[0],None,None,'Request', isarray)
+                                , bodyname, modelid[0],endpointid[0],description,None,'Request', isarray)
                                 cnxn.commit()
                 except:
                     print "hjjjnnnnn"
@@ -104,6 +107,8 @@ for item in endpointsitemlist:
                             returns = re.sub('}','',returns)               
                     elif 'T:BQECore.Model.' in returns:   
                         returns = re.sub('T:BQECore.Model.','',returns)
+                    elif 'BQECore.Model.' in returns:   
+                        returns = re.sub('BQECore.Model.','',returns)    
                     elif  'T:System.' in returns:
                         print "req"
                         returns = re.sub('T:System.','',returns) 
@@ -142,12 +147,13 @@ for item in endpointsitemlist:
                 # if endpointid == None and modelid == None:
                 # Parsing Request Body parameters
                 bodyname = item.getElementsByTagName('param')[0].attributes['name'].value.strip()
+                description = item.getElementsByTagName('param')[0].firstChild.nodeValue.strip()
                 print bodyname
                 cursor.execute("select * from body where Name = ? and EndPointID=? ",bodyname,endpointid[0])
                 repeatbody = cursor.fetchone() 
                 if repeatbody == None:
                     print "iklllll"
-                    cursor.execute('EXEC BodyInsert @Name=?, @ModelID=?, @EndPointID=?, @Description=?, @Filter=?, @BodyType=?, @IsArrayType=?', bodyname, modelid[0],endpointid[0],None,None,'Request', isarray)
+                    cursor.execute('EXEC BodyInsert @Name=?, @ModelID=?, @EndPointID=?, @Description=?, @Filter=?, @BodyType=?, @IsArrayType=?', bodyname, modelid[0],endpointid[0],description,None,'Request', isarray)
                     cnxn.commit() 
                     print "yesss" 
             except:
@@ -190,6 +196,8 @@ for item in endpointsitemlist:
                         returns = re.sub('}','',returns)               
                 elif 'T:BQECore.Model.' in returns:   
                     returns = re.sub('T:BQECore.Model.','',returns)
+                elif 'T:BQECore.Model.' in returns:   
+                    returns = re.sub('T:BQECore.Model.','',returns)    
                 elif  'T:System.' in returns:
                     print "req"
                     returns = re.sub('T:System.','',returns) 

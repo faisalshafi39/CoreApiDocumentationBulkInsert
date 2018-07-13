@@ -5,7 +5,7 @@ import pyodbc
 import re
 
 # Creating SQL SERVER Creation
-cnxn = pyodbc.connect(r"Driver={SQL Server Native Client 11.0};Server=.\SQL2016;Database=PublicApi;uid=sa;pwd=sa")
+cnxn = pyodbc.connect(r"Driver={SQL Server Native Client 11.0};Server=.\SQL2016;Database=CoreRestDocumentationJuly;uid=sa;pwd=sa")
 						
 cursor = cnxn.cursor()
 from xml.dom import minidom
